@@ -3,14 +3,14 @@ import cv2
 import pyautogui
 import time
 
-LEFT = -0.5
-RIGHT = 0.5
+RIGHT = -0.5
+LEFT = 0.5
 THRESHOLD = 3
 
 def get_slope(frame, lower_color, upper_color):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     mask = cv2.inRange(hsv, lower_color, upper_color)
-    kernel = np.ones((3, 3), dtype = np.uint8)
+    kernel = np.ones((5, 5), dtype = np.uint8)
     mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, kernel)
     mask = cv2.morphologyEx(mask, cv2.MORPH_CLOSE, kernel)
     res = cv2.bitwise_and(frame, frame, mask= mask)
@@ -22,14 +22,13 @@ def get_slope(frame, lower_color, upper_color):
         left_contour = np.sum(contours[0], axis = 0)/len(contours[0])
         right_contour = np.sum(contours[1], axis = 0)/len(contours[1])
         
-        cv2.circle(frame, (int(left_contour[0][0]), int(left_contour[0][1])), 32, (100, 100, 100))
-        cv2.circle(frame, (int(right_contour[0][0]), int(right_contour[0][1])), 32, (100, 100, 100))
+        cv2.circle(frame, (int(left_contour[0][0]), int(left_contour[0][1])), 32, (100, 100, 100), 5)
+        cv2.circle(frame, (int(right_contour[0][0]), int(right_contour[0][1])), 32, (100, 100, 100), 5)
         print((int(left_contour[0][0]), int(left_contour[0][1])), (int(right_contour[0][0]), int(right_contour[0][1])))
         return (int(left_contour[0][0]), int(left_contour[0][1])), (int(right_contour[0][0]), int(right_contour[0][1]))
     
     else:
-        print(len(left_contour), len(right_contour))
-        return -1
+        raise ValueError("Length of contours is less than 0")
 
 def backward(frame, lower_color, upper_color):
     # hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
@@ -58,14 +57,17 @@ if __name__ == "__main__":
         
         try:
             (x1, y1), (x2, y2) = get_slope(frame, lower_blue, upper_blue)
-        except:
+            cv2.imshow('frame',frame)
+        
+            if cv2.waitKey(10) & 0xFF == ord('q'):
+                break
+        except ValueError:
             print("Colors not found!")
+            cv2.imshow('frame',frame)
+
+            if cv2.waitKey(10) & 0xFF == ord('q'):
+                break
             continue
-        
-        cv2.imshow('frame',frame)
-        
-        if cv2.waitKey(10) & 0xFF == ord('q'):
-            break
         
         slope = (y2 - y1)/(x2 - x1)
         print(f"Slope: {slope}")
@@ -73,20 +75,20 @@ if __name__ == "__main__":
             if slope > RIGHT and slope < LEFT:
                 print("Forward")
                 pyautogui.keyDown('w')
-                time.sleep(0.10)
+                time.sleep(0.002)
                 pyautogui.keyUp('w')
             elif slope > RIGHT and slope > LEFT:
-                print("Right")
+                print("Left")
                 pyautogui.keyDown('a')
                 pyautogui.keyDown('w')
-                time.sleep(0.10)
+                time.sleep(0.002)
                 pyautogui.keyUp('a')
                 pyautogui.keyUp('w')
             else:
-                print("Left")
+                print("Right")
                 pyautogui.keyDown('d')
                 pyautogui.keyDown('w')
-                time.sleep(0.10)
+                time.sleep(0.002)
                 pyautogui.keyUp('d')
                 pyautogui.keyUp('w')
         else:
