@@ -68,43 +68,45 @@ if __name__ == "__main__":
             if cv2.waitKey(10) & 0xFF == ord('q'):
                 break
             continue
-        
-        slope = (y2 - y1)/(x2 - x1)
+        try:
+            slope = (y2 - y1)/(x2 - x1)
+        except:
+            continue
         print(f"Slope: {slope}")
         if not backward(frame, lower_red, upper_red):
             if slope > RIGHT and slope < LEFT:
-                print("Forward")
+                #print("Forward")
                 pyautogui.keyDown('w')
-                time.sleep(0.002)
+                #time.sleep(0.002)
                 pyautogui.keyUp('w')
             elif slope > RIGHT and slope > LEFT:
-                print("Left")
+                #print("Left")
                 pyautogui.keyDown('a')
                 pyautogui.keyDown('w')
-                time.sleep(0.002)
+                #time.sleep(0.002)
                 pyautogui.keyUp('a')
                 pyautogui.keyUp('w')
             else:
-                print("Right")
+                #print("Right")
                 pyautogui.keyDown('d')
                 pyautogui.keyDown('w')
-                time.sleep(0.002)
+                #time.sleep(0.002)
                 pyautogui.keyUp('d')
                 pyautogui.keyUp('w')
         else:
             if slope > RIGHT and slope < LEFT:
                 pyautogui.keyDown('s')
-                time.sleep(0.10)
+                #time.sleep(0.002)
                 pyautogui.keyUp('s')
             elif slope > RIGHT and slope > LEFT:
                 pyautogui.keyDown('d')
                 pyautogui.keyDown('s')
-                time.sleep(0.10)
+                #time.sleep(0.002)
                 pyautogui.keyUp('d')
                 pyautogui.keyUp('s')
             else:
                 pyautogui.keyDown('a')
                 pyautogui.keyDown('s')
-                time.sleep(0.10)
+                #time.sleep(0.002)
                 pyautogui.keyUp('a')
                 pyautogui.keyUp('s')
