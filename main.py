@@ -5,8 +5,8 @@ import time
 from imutils.video import VideoStream
 import keyboard
 
-RIGHT = -0.5
-LEFT = 0.5
+RIGHT = -0.25
+LEFT = 0.25
 THRESHOLD = 3
 
 def get_slope(frame, lower_color, upper_color):
@@ -72,13 +72,22 @@ if __name__ == "__main__":
             slope = (y2 - y1)/(x2 - x1)
             print(f"Slope: {slope}")
             if not backward(frame, lower_red, upper_red):
-                keyboard.press_and_release('w')
-                if slope > RIGHT and slope > LEFT:
-                    #print("Left")
-                    keyboard.press_and_release('w, a')
+                if slope > RIGHT and slope < LEFT:
+                    pyautogui.keyDown('w')
+                    #time.sleep(0.002)
+                    pyautogui.keyUp('w')
+                elif slope > RIGHT and slope > LEFT:
+                    pyautogui.keyDown('a')
+                    pyautogui.keyDown('w')
+                    #time.sleep(0.002)
+                    pyautogui.keyUp('a')
+                    pyautogui.keyUp('w')
                 else:
-                    #print("Right")
-                    keyboard.press_and_release('w, d')
+                    pyautogui.keyDown('d')
+                    pyautogui.keyDown('w')
+                    #time.sleep(0.002)
+                    pyautogui.keyUp('d')
+                    pyautogui.keyUp('w')
             else:
                 if slope > RIGHT and slope < LEFT:
                     pyautogui.keyDown('s')
