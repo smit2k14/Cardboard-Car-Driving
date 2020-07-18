@@ -3,7 +3,6 @@ import cv2
 import pyautogui
 import time
 from imutils.video import VideoStream
-import keyboard
 
 RIGHT = -0.25
 LEFT = 0.25
