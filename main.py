@@ -2,6 +2,8 @@ import numpy as np
 import cv2
 import pyautogui
 import time
+from imutils.video import VideoStream
+import keyboard
 
 RIGHT = -0.5
 LEFT = 0.5
@@ -42,71 +44,59 @@ def backward(frame, lower_color, upper_color):
 
 
 if __name__ == "__main__":
-    cap = cv2.VideoCapture(0)
+    
     lower_red = np.array([155,25,0])
     upper_red = np.array([179,255,255])
     lower_blue= np.array([78,111,124])
     upper_blue = np.array([168,255,255])
-    # for i in range(5):
-    #     print(f"Starting in T - {5 - i}")
-    #     time.sleep(1)
+    video = VideoStream(src=0).start()
 
     while(1):
-        ret, frame = cap.read()
+        start_time = time.time()
+        frame = video.read()
         frame = cv2.GaussianBlur(frame, (5, 5), 0)
-        
+        x1, y1, x2, y2 = 0, 0, 0, 0 
         try:
             (x1, y1), (x2, y2) = get_slope(frame, lower_blue, upper_blue)
+            print(f"Time Taken for Slope Calculation: {time.time() - start_time}")
             cv2.imshow('frame',frame)
         
             if cv2.waitKey(10) & 0xFF == ord('q'):
                 break
         except ValueError:
-            print("Colors not found!")
             cv2.imshow('frame',frame)
-
             if cv2.waitKey(10) & 0xFF == ord('q'):
                 break
-            continue
+
         try:
             slope = (y2 - y1)/(x2 - x1)
+            print(f"Slope: {slope}")
+            if not backward(frame, lower_red, upper_red):
+                keyboard.press_and_release('w')
+                if slope > RIGHT and slope > LEFT:
+                    #print("Left")
+                    keyboard.press_and_release('w, a')
+                else:
+                    #print("Right")
+                    keyboard.press_and_release('w, d')
+            else:
+                if slope > RIGHT and slope < LEFT:
+                    pyautogui.keyDown('s')
+                    #time.sleep(0.002)
+                    pyautogui.keyUp('s')
+                elif slope > RIGHT and slope > LEFT:
+                    pyautogui.keyDown('d')
+                    pyautogui.keyDown('s')
+                    #time.sleep(0.002)
+                    pyautogui.keyUp('d')
+                    pyautogui.keyUp('s')
+                else:
+                    pyautogui.keyDown('a')
+                    pyautogui.keyDown('s')
+                    #time.sleep(0.002)
+                    pyautogui.keyUp('a')
+                    pyautogui.keyUp('s')
         except:
-            continue
-        print(f"Slope: {slope}")
-        if not backward(frame, lower_red, upper_red):
-            if slope > RIGHT and slope < LEFT:
-                #print("Forward")
-                pyautogui.keyDown('w')
-                #time.sleep(0.002)
-                pyautogui.keyUp('w')
-            elif slope > RIGHT and slope > LEFT:
-                #print("Left")
-                pyautogui.keyDown('a')
-                pyautogui.keyDown('w')
-                #time.sleep(0.002)
-                pyautogui.keyUp('a')
-                pyautogui.keyUp('w')
-            else:
-                #print("Right")
-                pyautogui.keyDown('d')
-                pyautogui.keyDown('w')
-                #time.sleep(0.002)
-                pyautogui.keyUp('d')
-                pyautogui.keyUp('w')
-        else:
-            if slope > RIGHT and slope < LEFT:
-                pyautogui.keyDown('s')
-                #time.sleep(0.002)
-                pyautogui.keyUp('s')
-            elif slope > RIGHT and slope > LEFT:
-                pyautogui.keyDown('d')
-                pyautogui.keyDown('s')
-                #time.sleep(0.002)
-                pyautogui.keyUp('d')
-                pyautogui.keyUp('s')
-            else:
-                pyautogui.keyDown('a')
-                pyautogui.keyDown('s')
-                #time.sleep(0.002)
-                pyautogui.keyUp('a')
-                pyautogui.keyUp('s')
+            pass
+        
+        print(f"Time taken for the entire algorithm: {time.time() - start_time}")
