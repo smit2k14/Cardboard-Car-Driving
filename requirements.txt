@@ -1,7 +1,10 @@
 appdirs==1.4.4
 attrs==19.3.0
+black==19.10b0
 click==7.1.2
 cycler==0.10.0
+imutils==0.5.3
+keyboard==0.13.5
 kiwisolver==1.2.0
 matplotlib==3.2.2
 MouseInfo==0.1.3
