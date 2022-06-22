@@ -8,7 +8,7 @@ keyboard==0.13.5
 kiwisolver==1.2.0
 matplotlib==3.2.2
 MouseInfo==0.1.3
-numpy==1.19.0
+numpy==1.22.0
 opencv-python==4.2.0.34
 pathspec==0.8.0
 Pillow==7.2.0
